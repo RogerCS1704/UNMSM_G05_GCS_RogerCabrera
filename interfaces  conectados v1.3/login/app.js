@@ -1,6 +1,27 @@
+let pagina=1;
+const areas = {
+    nombre:'',
+    fecha:'',
+    hora:'',
+    servicios:[]
+};
+
+
 document.addEventListener('DOMContentLoaded',function(){
     crearLista();
 
+    mostrarPagina();
+
+    cambiarSeccion();
+
+    
+    nombreCita();
+
+    fechaCita();
+
+    desabilitarFechaAnterior();
+
+    horaCita();
 });
 
  
@@ -36,9 +57,9 @@ async function crearLista(){
 }
 
 function seleccionarServicio(e){
-    console.log(e.target.parentElement);//padre
-    console.log(e.target);//padre inmediato
-    console.log(e.target.tagName);//tipo de etiqueta
+    //console.log(e.target.parentElement);//padre
+    //console.log(e.target);//padre inmediato
+    //console.log(e.target.tagName);//tipo de etiqueta
     let elemento;
     if(e.target.tagName=='P'){
         elemento = e.target.parentElement;
@@ -48,9 +69,153 @@ function seleccionarServicio(e){
 
     if(elemento.classList.contains('selector')){
         elemento.classList.remove('selector');
+        const id = parseInt(elemento.dataset.idServicio);
+        eliminarServicio(id);
     }else{
         elemento.classList.add('selector');
+        const servicioObj = {
+            id: parseInt(elemento.dataset.idServicio),
+            nombre: elemento.firstElementChild.textContent,
+            precio: elemento.firstElementChild.nextElementSibling.textContent
+        }
+        agregarServicio(servicioObj);
+    }
+}
+
+function agregarServicio(servicioObj){
+
+    const {servicios} = areas;
+    console.log(areas);
+    areas.servicios = [...servicios,servicioObj];
+}
+
+function eliminarServicio(id){
+    const {servicios} = areas;
+    console.log(areas);
+    areas.servicios = servicios.filter(servicio => servicio.id != id);
+}
+
+
+function mostrarPagina(){
+    
+    //selecciono el anterior, si este noe xiste se le pone la clase al siguiente o si existe se le quita al anterior y se le pone al siguiente
+    const paginaAnterior = document.querySelector ('.mostrar-seccion');
+    if(paginaAnterior){
+        paginaAnterior.classList.remove('mostrar-seccion');
     }
 
+    const paginaActual = document.querySelector('#paso-'+pagina);
+    paginaActual.classList.add('mostrar-seccion');
 
+    const tabAnterior = document.querySelector('.tab .pintar');
+    if(tabAnterior){
+        tabAnterior.classList.remove('pintar');
+    }
+    const tabSigiente = document.querySelector('[data-paso='+'"'+pagina+'"'+']');
+    tabSigiente.classList.add('pintar');
+}
+function cambiarSeccion(){
+    const enlaces = document.querySelectorAll('.tab button');
+    enlaces.forEach(enlace =>{
+        enlace.addEventListener('click',e =>{
+            e.preventDefault();
+            pagina = parseInt(e.target.dataset.paso);
+            mostrarPagina();
+        });
+    });
+}
+
+
+
+function mostrarAlerta(mostrarMensaje ,tipo){
+    //console.log('el mensaje es:::'+mostrarMensaje);
+    const alertaPrevi = document.querySelector('.alerta');
+    if(alertaPrevi){
+        document.querySelector('.alerta').remove('.alerta');
+        //return;
+    }
+    const alerta = document.createElement('DIV');
+    alerta.textContent = mostrarMensaje;
+    alerta.classList.add('alerta');
+    if(tipo==='error'){
+        alerta.classList.add('error');
+    }
+    //console.log(alerta);
+    const formulario = document.querySelector('.formulario');
+    formulario.appendChild(alerta);
+
+    //eliminar alerta despues de un tiempo
+    setTimeout(()=>{
+        alerta.remove();
+    },2000);
+}
+
+function nombreCita(){
+        const nombreFormulario = document.querySelector('#nombre');
+        nombreFormulario.addEventListener('input',(e)=>{
+        const nombreTexto = e.target.value;
+        
+        //validacion
+        if(nombreTexto==='' || nombreTexto.length<3){
+            mostrarAlerta('Nombre no valido','error');
+            return ;
+        }
+            areas.nombre = nombreTexto;
+            //mostrarAlerta('Nombre  valido');
+            console.log(areas);
+    });
+}
+
+function fechaCita(){
+    const fechaInput = document.querySelector('#fecha');
+    fechaInput.addEventListener('input',(e)=>{
+       
+       /* const opciones = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long'
+        }*/
+        const dia = new Date(e.target.value).getUTCDay();
+        
+        if([0,6].includes(dia)){
+            e.preventDefault();
+            fechaInput.value='';
+            mostrarAlerta('No hay atencion el dia seleccionado','error');
+            return;
+        }
+        areas.fecha=fechaInput.value;
+            //console.log(cita);
+            console.log(areas);
+        
+        //console.log(dia.toLocaleDateString('es-ES',opciones));
+    });
+}
+
+function desabilitarFechaAnterior(){
+    const inputFecha = document.querySelector('#fecha');
+    const fechaAhora = new Date();
+    const year = fechaAhora.getFullYear();
+    const mes = fechaAhora.getMonth()+1;
+    const dia = fechaAhora.getDate()+1;
+
+    const fechaDeshabilitar = year+'-'+mes+'-'+dia;
+    inputFecha.min = fechaDeshabilitar;
+}
+
+function horaCita(){
+    const inputHora = document.querySelector('#hora');
+    inputHora.addEventListener('input',(e)=>{
+        const horaReserva = e.target.value;
+        const hora = horaReserva.split(':');
+        //console.log(hora);
+        if(hora[0]<9 || hora[0]>18){
+            e.preventDefault();
+            inputHora.value='';
+            mostrarAlerta('Hora no valida','error');
+            return;
+        }
+        areas.hora = horaReserva;
+        console.log(areas);
+        
+    });   
 }
