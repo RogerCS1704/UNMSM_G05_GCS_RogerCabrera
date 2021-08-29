@@ -22,13 +22,15 @@ document.addEventListener('DOMContentLoaded',function(){
     desabilitarFechaAnterior();
 
     horaCita();
+
+    resumen();
 });
 
  
 async function crearLista(){
     const bd = await fetch('./listado.json');
     const resultado = await bd.json();
-    console.log(resultado);
+   // console.log(resultado);
     const{servicios} = resultado;
     
     servicios.forEach(servicio => {
@@ -113,7 +115,10 @@ function mostrarPagina(){
     }
     const tabSigiente = document.querySelector('[data-paso='+'"'+pagina+'"'+']');
     tabSigiente.classList.add('pintar');
+    resumen();
 }
+
+
 function cambiarSeccion(){
     const enlaces = document.querySelectorAll('.tab button');
     enlaces.forEach(enlace =>{
@@ -162,7 +167,7 @@ function nombreCita(){
         }
             areas.nombre = nombreTexto;
             //mostrarAlerta('Nombre  valido');
-            console.log(areas);
+            //console.log(areas);
     });
 }
 
@@ -185,7 +190,7 @@ function fechaCita(){
         }
         areas.fecha=fechaInput.value;
             //console.log(cita);
-            console.log(areas);
+            //console.log(areas);
         
         //console.log(dia.toLocaleDateString('es-ES',opciones));
     });
@@ -215,7 +220,70 @@ function horaCita(){
             return;
         }
         areas.hora = horaReserva;
-        console.log(areas);
-        
+        //console.log(areas);
     });   
+}
+
+function resumen(){
+    const {nombre,fecha,hora,servicios}=areas;
+    const noInfo = document.querySelector('.tercero');
+    //noInfo.innerHTML='';
+    //limpiar html
+        while(noInfo.firstChild){
+            noInfo.removeChild(noInfo.firstChild);
+        }
+    if(Object.values(areas).includes('')){
+        const parrafo = document.createElement('P');
+        parrafo.textContent='No a incluido sus datos ni servicios';
+        parrafo.classList.add('invalidar-cita');
+        noInfo.appendChild(parrafo);
+        return;
+    }
+    const nombreCita = document.createElement('P');
+    nombreCita.innerHTML = '<span>Nombre:</span>'+nombre;
+
+    const fechaCita = document.createElement('P');
+    fechaCita.innerHTML = '<span>Fecha:</span>'+fecha;
+
+    const horaCita = document.createElement('P');
+    horaCita.innerHTML = '<span>Hora:</span>'+hora;
+
+    const servicioCita = document.createElement('DIV');
+    servicioCita.classList.add('resumen-servicio');
+
+    let cantidad = 0;
+
+    servicios.forEach( (servicio) =>{
+        const {nombre,precio} = servicio;
+        const contenedorServicio = document.createElement('DIV');
+        contenedorServicio.classList.add('contenedor-servicio');
+
+        const textoServicio = document.createElement('P');
+        textoServicio.textContent = nombre;
+
+        const precioServicio = document.createElement('P');
+        precioServicio.textContent = precio;
+        precioServicio.classList.add('precio');
+
+        contenedorServicio.appendChild(textoServicio);
+        contenedorServicio.appendChild(precioServicio);
+
+        servicioCita.appendChild(contenedorServicio);
+
+        //const totalServicio = precio.split('$');
+        //cantidad += parseInt(totalServicio[1].trim());
+    });
+    console.log(cantidad);
+    const titulo = document.createElement('h3');
+    titulo.textContent = 'Resumen de Servicios';
+    titulo.classList.add('titulo');
+    noInfo.appendChild(titulo);
+    noInfo.appendChild(nombreCita);
+    noInfo.appendChild(fechaCita);
+    noInfo.appendChild(horaCita);
+    const subtitulo = document.createElement('h3');
+    subtitulo.textContent = 'Servicios Seleccionados';
+    subtitulo.classList.add('subtitulo');
+    noInfo.appendChild(subtitulo);  
+    noInfo.appendChild(servicioCita);
 }

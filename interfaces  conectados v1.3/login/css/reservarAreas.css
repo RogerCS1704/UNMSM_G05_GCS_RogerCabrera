@@ -156,6 +156,48 @@ button:hover{
     background-color: rgb(88, 96, 160);
 }
 
+.formulario{
+    width: 90%;
+    margin: 0 auto;
+}
 .campo{
-    width: 100%;
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+}
+.formulario input{
+    flex: 1 ;
+    padding: 1rem;
+    border-radius: 1rem;
+    border: none;
+}
+.formulario label{
+    flex: 0 0 10rem;
+    font-size: 2rem;
+}
+.error{
+    margin: 2rem auto 0 auto;
+    background-color: red;
+    color: white;
+    width: 20rem;
+    font-size: 2rem;
+    padding: 1rem;
+    text-align: center;
+    border-radius: 1rem;  
+}
+
+.tercero{
+    margin: 2rem auto 0 auto;
+}
+.tercero .titulo{
+    margin-bottom: 5rem;
+    font-size: 5rem;
+}
+.tercero span{
+    font-weight: bold;
+}
+.tercero p,h3{
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 3rem;
 }
