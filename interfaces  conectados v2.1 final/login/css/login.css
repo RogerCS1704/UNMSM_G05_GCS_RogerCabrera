@@ -9,7 +9,7 @@ body {
 
 .login-box {
     width: 320px;
-    height: 350px;
+    height: 380px;
     background-color: white;
     color: black;
     top: 50%;
@@ -105,4 +105,16 @@ body {
 
 .boton-entrar:hover{
     background-color: cadetblue;
+}
+
+.error{
+    background-color:red;
+    color: white;
+    text-transform: uppercase;
+    padding: .3rem;
+    text-align: center;
+    border-radius:1rem
+}
+.ocultar{
+    visibility:hidden;
 }

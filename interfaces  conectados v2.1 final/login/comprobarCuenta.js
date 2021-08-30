@@ -17,8 +17,6 @@ async function agregarAdmin(){
 
     const {administrador} = bd;
     const objeto = administrador[0];
-    //const name = objeto[0];
-    //console.log(objeto['acount']);
     
     agregarUsuario(objeto['acount']);
     agregarPass(objeto['password']);
@@ -27,11 +25,13 @@ async function agregarAdmin(){
 
 function agregarUsuario(nombre){
     const inUsuario = document.querySelector('.usuario');
+    
     inUsuario.addEventListener('input',(e)=>{
         //e.preventDefault();
         let user = e.target.value;
         if(user!== nombre){
             mostrarAlerta('Usuario incorrecto' ,'error');
+
         }
     });
     
